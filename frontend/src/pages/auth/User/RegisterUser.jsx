@@ -1,8 +1,10 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router";
 
 const RegisterUser = () => {
+  const navigate = useNavigate();
+
   const [postData, setPostData] = useState({
     username: "",
     password: "",
@@ -26,8 +28,6 @@ const RegisterUser = () => {
         return;
       }
 
-      console.log(postData.username);
-
       const userModel = {
         username: postData.username,
         password: postData.password,
@@ -37,10 +37,15 @@ const RegisterUser = () => {
         "http://localhost:8080/register",
         userModel
       );
+      const data = await response.data;
+      if (data.message === "User is created") {
+        alert("User is created");
+        navigate("/api/v1/auth/login");
+      } else {
+        alert(data.message);
+      }
 
-      console.log(response.data);
-
-      console.log(userModel);
+      console.log(data);
     } catch (error) {
       console.log(error.message);
     }
@@ -50,11 +55,6 @@ const RegisterUser = () => {
     <div>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            alt="Your Company"
-            src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-            className="mx-auto h-10 w-auto"
-          />
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
             Sign up Here
           </h2>
@@ -137,12 +137,12 @@ const RegisterUser = () => {
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
             Not a member?{" "}
-            <a
-              href="#"
+            <Link
+              to={"/api/v1/auth/login"}
               className="font-semibold text-indigo-600 hover:text-indigo-500"
             >
               Sign in
-            </a>
+            </Link>
           </p>
         </div>
       </div>
