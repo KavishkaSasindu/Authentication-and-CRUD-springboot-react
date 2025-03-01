@@ -1,5 +1,6 @@
 package com.example.Backend.config;
 
+import com.example.Backend.jwt.JwtFilter;
 import com.example.Backend.service.MyUserDetailsService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Data
 @Configuration
@@ -22,10 +29,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private MyUserDetailsService myUserDetailsService;
+    private JwtFilter jwtFilter;
 
     @Autowired
-    public SecurityConfig(MyUserDetailsService myUserDetailsService){
+    public SecurityConfig(MyUserDetailsService myUserDetailsService,JwtFilter jwtFilter){
         this.myUserDetailsService = myUserDetailsService;
+        this.jwtFilter = jwtFilter;
     }
 
     @Bean
@@ -43,6 +52,8 @@ public class SecurityConfig {
                         .requestMatchers("/login","/register").permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
@@ -53,4 +64,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
 }

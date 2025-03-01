@@ -38,11 +38,8 @@ const RegisterUser = () => {
         userModel
       );
       const data = await response.data;
-      if (data.message === "User is created") {
-        alert("User is created");
+      if (response.status === 200) {
         navigate("/api/v1/auth/login");
-      } else {
-        alert(data.message);
       }
 
       console.log(data);

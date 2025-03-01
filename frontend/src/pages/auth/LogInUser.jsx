@@ -21,11 +21,10 @@ const LogInUser = () => {
     e.preventDefault();
 
     const response = await axios.post("http://localhost:8080/login", userModel);
-    console.log(response);
 
     const data = await response.data;
     if (response.status === 200) {
-      alert("Successfully logged in");
+      alert(data.message);
       localStorage.setItem("jwt_token", data.token);
       navigate("/");
     }
